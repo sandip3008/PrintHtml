@@ -1,0 +1,25 @@
+{
+  "name": "PrintHtml",
+  "version": "1.0.0",
+  "description": "Used to render html and display on webview which can used to send render html to printer wrapper of Android native",
+  "cordova": {
+    "id": "com.rewaa.printhtml.plugin",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandip3008/PrintHtml.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Sandip M",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sandip3008/PrintHtml/issues"
+  },
+  "homepage": "https://github.com/sandip3008/PrintHtml#readme"
+}
