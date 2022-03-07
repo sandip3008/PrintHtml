@@ -7,9 +7,6 @@
         <clobbers target="PrintHtml" />
     </js-module>
     <platform name="android">
-        <config-file target="AndroidManifest.xml" parent="/*">
-            <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode" android:name="com.rewaa.printhtml.plugin.MainActivity" android:label="@string/title_activity_main" android:theme="@style/AppTheme.NoActionBarLaunch" android:launchMode="singleTask" android:exported="true"/>
-        </config-file>
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="PrintHtml">
                 <param name="android-package" value="com.rewaa.printhtml.plugin.PrintHtml" />
@@ -19,9 +16,5 @@
         <source-file src="src/android/PrintHtml.java" target-dir="src/com/rewaa/printhtml/plugin/PrintHtml" />
         <source-file src="src/android/MainActivity.java" target-dir="src/com/rewaa/printhtml/plugin" />
         <source-file src="src/android/activity_webview.xml" target-dir="res/layout"/>
-
-        <edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='com.example.app.MainActivity']" mode="overwrite">
-            <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode" android:name="com.example.app.MainActivity" android:exported="true" android:label="@string/title_activity_main" android:theme="@style/AppTheme.NoActionBarLaunch" android:launchMode="singleTask" />
-        </edit-config>
     </platform>
 </plugin>
