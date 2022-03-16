@@ -1,6 +1,5 @@
 package com.rewaa.printhtml.plugin;
 
-;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -122,13 +121,13 @@ public class MainActivity extends Activity {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
       super.onPageStarted(view, url, favicon);
-      progressBar.setVisibility(View.VISIBLE);
+//      progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
       super.onPageFinished(view, url);
-      progressBar.setVisibility(View.GONE);
+//      progressBar.setVisibility(View.GONE);
       createWebPrintJob(view);
     }
   }
