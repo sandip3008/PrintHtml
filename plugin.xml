@@ -12,7 +12,10 @@
                 <param name="android-package" value="com.rewaa.printhtml.plugin.PrintHtml" />
             </feature>
         </config-file>
-        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode" android:name="com.rewaa.printhtml.plugin.MainActivity" android:label="Print Invoice" android:exported="true" android:theme="@style/AppTheme.NoActionBarLaunch" android:launchMode="singleTask">
+            </activity>
+        </config-file>
         <source-file src="src/android/PrintHtml.java" target-dir="src/com/rewaa/printhtml/plugin/PrintHtml" />
         <source-file src="src/android/MainActivity.java" target-dir="src/com/rewaa/printhtml/plugin" />
         <source-file src="src/android/activity_webview.xml" target-dir="res/layout"/>
