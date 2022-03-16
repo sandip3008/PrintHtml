@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
 
     webView = findViewById(R.id.web);
     progressBar = findViewById(R.id.progress);
-
+    progressBar.setVisibility(View.GONE);
     webView.getSettings().setJavaScriptEnabled(true);
     webView.getSettings().setSupportZoom(false);
     webView.getSettings().setDomStorageEnabled(true);
