@@ -17,6 +17,7 @@ import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -62,12 +63,21 @@ public class MainActivity extends Activity {
     webView.getSettings().setDomStorageEnabled(true);
     webView.setWebViewClient(new myWebViewclient());
     String html = "";
-    try {
-      html = URLEncoder.encode(getIntent().getStringExtra("data"), "utf-8").replaceAll("\\+", " ");
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+    if (getIntent().hasExtra("url")) {
+      String url = getIntent().getStringExtra("url");
+
+      if (TextUtils.isEmpty(url))
+        this.finish();
+
+      webView.loadUrl(url);
+    } else {
+      try {
+        html = URLEncoder.encode(getIntent().getStringExtra("data"), "utf-8").replaceAll("\\+", " ");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+      webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
     }
-    webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
 
 
     //  ==================== START HERE: THIS CODE BLOCK IS TO ENABLE FILE DOWNLOAD FROM THE WEB. YOU CAN COMMENT IT OUT IF YOUR APPLICATION DOES NOT REQUIRE FILE DOWNLOAD. IT WAS ADDED ON REQUEST ======//
@@ -192,7 +202,7 @@ public class MainActivity extends Activity {
       printManager.print(jobName, printAdapter, new PrintAttributes.Builder().setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0)).build());
     } else {
       Log.e("createWebPrintJob", "printManager null");
-//            webView.loadData(String.format(Locale.US, htmlHead, fontSize, printFontSize) + "PrintManager is null" + htmlFooter, "text/html; charset=utf-8", "utf-8");
+    //webView.loadData(String.format(Locale.US, htmlHead, fontSize, printFontSize) + "PrintManager is null" + htmlFooter, "text/html; charset=utf-8", "utf-8");
 
     }
   }
