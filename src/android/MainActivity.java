@@ -1,30 +1,25 @@
 package com.rewaa.printhtml.plugin;
 
 
+import static android.text.TextUtils.isEmpty;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.CancellationSignal;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.DownloadListener;
-import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
-import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -32,13 +27,13 @@ import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Locale;
 
 import capacitor.android.plugins.R;
 
 
 public class MainActivity extends Activity {
 
+  private static final String TAG = MainActivity.class.getSimpleName();
   WebView webView;
   ProgressBar progressBar;
 
@@ -66,14 +61,20 @@ public class MainActivity extends Activity {
     if (getIntent().hasExtra("url")) {
       String url = getIntent().getStringExtra("url");
 
-      if (TextUtils.isEmpty(url))
+      if (isEmpty(url))
         this.finish();
 
       webView.loadUrl(url);
     } else {
+      SharedPreferences sharedPreferences = getSharedPreferences("itemData", 0);
+      String items = sharedPreferences.getString("items", "");
+      if (isEmpty(items)) {
+        Log.e(TAG, "ERROR: EMPTY ITEMS");
+      }
       try {
-        html = URLEncoder.encode(getIntent().getStringExtra("data"), "utf-8").replaceAll("\\+", " ");
-      } catch (UnsupportedEncodingException e) {
+        html = URLEncoder.encode(items, "utf-8").replaceAll("\\+", " ");
+      } catch (StackOverflowError | Exception e) {
+        Log.d(TAG, "StackOverflowError: ");
         e.printStackTrace();
       }
       webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
