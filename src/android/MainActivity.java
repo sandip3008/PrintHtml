@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
@@ -20,11 +21,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -36,6 +41,7 @@ public class MainActivity extends Activity {
   private static final String TAG = MainActivity.class.getSimpleName();
   WebView webView;
   ProgressBar progressBar;
+  Boolean isPrinted = false;
 
   String url = "file:///android_asset/img/test.html";
 
@@ -111,6 +117,17 @@ public class MainActivity extends Activity {
 
   public class myWebViewclient extends WebViewClient {
 
+    private void closeAndPrint(WebView view){
+      try {
+        super.onPageFinished(view, url);
+        progressBar.setVisibility(View.GONE);
+        if(!isPrinted)
+          createWebPrintJob(view);
+      }catch (Exception e){
+        e.printStackTrace();
+      }
+  }
+
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       view.loadUrl(url);
@@ -118,28 +135,54 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+//      Toast.makeText(getApplicationContext(),
+//        "WebView Error" + errorResponse.getReasonPhrase(),
+//        Toast.LENGTH_SHORT).show();
+      super.onReceivedHttpError(view, request, errorResponse);
+      closeAndPrint(view);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+      super.onReceivedError(view, request, error);
+      Log.e(TAG,"Error occured "+ "." +error.getDescription().toString());
+      closeAndPrint(view);
+//      Toast.makeText(getApplicationContext(),
+//        "WebView onReceivedError" + error.toString(),
+//        Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    @SuppressWarnings("deprecation")
+    @Override
     public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-      Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
+//      view.loadUrl("about:blank");
+      Log.e(TAG," Error occured while loading the web page at Url"+ failingUrl+"." +description);
+      super.onReceivedError(view, errorCode, description, failingUrl);
+//      Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
+      closeAndPrint(view);
 //      webView.loadUrl("file:///android_asset/lost.html");
     }
 
     @Override
     public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
       super.onReceivedSslError(view, handler, error);
+      progressBar.setVisibility(View.GONE);
       handler.cancel();
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
       super.onPageStarted(view, url, favicon);
-//      progressBar.setVisibility(View.VISIBLE);
+      progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
-      super.onPageFinished(view, url);
-//      progressBar.setVisibility(View.GONE);
-      createWebPrintJob(view);
+      closeAndPrint(view);
     }
   }
 
@@ -201,6 +244,7 @@ public class MainActivity extends Activity {
     //open print dialog
     if (printManager != null) {
       printManager.print(jobName, printAdapter, new PrintAttributes.Builder().setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0)).build());
+      isPrinted = true;
     } else {
       Log.e("createWebPrintJob", "printManager null");
     //webView.loadData(String.format(Locale.US, htmlHead, fontSize, printFontSize) + "PrintManager is null" + htmlFooter, "text/html; charset=utf-8", "utf-8");
